@@ -1,0 +1,53 @@
+#!/bin/bash
+# gmdp DB
+
+# Stop on errors
+set -e
+
+# Sanity check command line options
+usage() {
+  echo "Usage: $0 (create|destroy|reset|dump)"
+}
+
+if [ $# -ne 1 ]; then
+  usage
+  exit 1
+fi
+
+# Parse argument.  $1 is the first argument
+case $1 in
+  "create")
+  if [ -f var/gmdp.sqlite3 ]; then
+    echo "Error: database already exists"
+  else
+    sqlite3 var/gmdp.sqlite3 < sql/schema.sql
+    echo "+ sqlite3 var/gmdp.sqlite3 < sql/schema.sql"
+    sqlite3 var/gmdp.sqlite3 < sql/data.sql
+    echo "+ sqlite3 var/gmdp.sqlite3 < sql/data.sql"
+  fi
+    ;;
+
+  "destroy")
+    rm -rf var/gmdp.sqlite3
+    echo "+ rm -rf var/gmdp.sqlite3"
+    ;;
+
+  "reset")
+    rm -rf var/gmdp.sqlite3
+    echo "+ rm -rf var/gmdp.sqlite3"
+    sqlite3 var/gmdp.sqlite3 < sql/schema.sql
+    echo "+ sqlite3 var/gmdp.sqlite3 < sql/schema.sql"
+    sqlite3 var/gmdp.sqlite3 < sql/data.sql
+    echo "+ sqlite3 var/gmdp.sqlite3 < sql/data.sql"
+    ;;
+
+  "dump")
+    sqlite3 -batch -line var/gmdp.sqlite3 'SELECT * FROM users'
+    sqlite3 -batch -line var/gmdp.sqlite3 'SELECT * FROM seats'
+    ;;
+
+  *)
+    usage
+    exit 1
+    ;;
+esac

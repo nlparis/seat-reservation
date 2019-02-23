@@ -1,0 +1,17 @@
+CREATE TABLE users(
+	username VARCHAR(20) NOT NULL,
+	email VARCHAR(40) NOT NULL,
+    phone VARCHAR(15) NOT NULL,
+	password VARCHAR(256) NOT NULL,
+	PRIMARY KEY(username)
+);
+
+CREATE TABLE seats(
+    seatid INTEGER NOT NULL,
+    tableid VARCHAR(64) NOT NULL,
+    owner VARCHAR(20) NOT NULL,
+    created TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    FOREIGN KEY(owner) REFERENCES users(username) ON DELETE CASCADE,
+    PRIMARY KEY(seatid)
+);
+
